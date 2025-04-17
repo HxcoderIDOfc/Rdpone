@@ -22,7 +22,7 @@ echo SUCCESS! Tailscale RDP session initialized!
 echo Access via Tailscale IP (check GitHub workflow log)
 echo ------------------------------------------------------
 echo Username: administrator
-echo Password: W2016
+echo Password: Perbatasan13#
 echo ------------------------------------------------------
 echo Note: Make sure your device is connected to Tailscale.
 echo ======================================================
