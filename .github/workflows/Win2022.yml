@@ -10,25 +10,32 @@ jobs:
     steps:
     - name: Download Files
       run: |
+        # Download Tailscale Setup
         Invoke-WebRequest https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe -OutFile tailscale-setup.exe
+        # Download RDP-related files (start, wallpaper, loop, etc.)
         Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/start.bat -OutFile start.bat
         Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/wallpaper.png -OutFile wallpaper.png
         Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/wallpaper.bat -OutFile wallpaper.bat
         Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/loop.bat -OutFile loop.bat
 
     - name: Install Tailscale
-      run: Start-Process .\tailscale-setup.exe -Wait
+      run: |
+        # Install Tailscale silently
+        Start-Process .\tailscale-setup.exe -ArgumentList "/S" -Wait
 
     - name: Start Tailscale
       run: |
+        # Start Tailscale with provided authentication key and hostname
         tailscale up --authkey $Env:TAILSCALE_AUTHKEY --hostname github-rdp
       env:
         TAILSCALE_AUTHKEY: ${{ secrets.TAILSCALE_AUTHKEY }}
 
     - name: Enable RDP Access
       run: |
+        # Enable RDP access and allow remote desktop connections
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        # Copy wallpaper and batch files to the desktop
         copy wallpaper.png C:\Users\Public\Desktop\wallpaper.png
         copy wallpaper.bat C:\Users\Public\Desktop\wallpaper.bat
 
@@ -36,4 +43,6 @@ jobs:
       run: cmd /c start.bat
 
     - name: Keep Alive
-      run: cmd /c loop.bat
+      run: |
+        # Keep the RDP session alive
+        cmd /c loop.bat
