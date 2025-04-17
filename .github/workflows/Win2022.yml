@@ -10,11 +10,11 @@ jobs:
     steps:
     - name: Download Files
       run: |
-        Invoke-WebRequest https://storage.curvee.eu.org/tailscale-setup.exe -OutFile tailscale-setup.exe
-        Invoke-WebRequest https://storage.curvee.eu.org/start-2022.bat -OutFile start.bat
-        Invoke-WebRequest https://storage.curvee.eu.org/wallpaper.png -OutFile wallpaper.png
-        Invoke-WebRequest https://storage.curvee.eu.org/wallpaper.bat -OutFile wallpaper.bat
-        Invoke-WebRequest https://storage.curvee.eu.org/loop.bat -OutFile loop.bat
+        Invoke-WebRequest https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe -OutFile tailscale-setup.exe
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/start.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/wallpaper.png -OutFile wallpaper.png
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/wallpaper.bat -OutFile wallpaper.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/loop.bat -OutFile loop.bat
 
     - name: Install Tailscale
       run: Start-Process .\tailscale-setup.exe -Wait
