@@ -21,12 +21,14 @@ jobs:
     - name: Install Tailscale
       run: |
         # Install Tailscale silently
-        Start-Process .\tailscale-setup.exe -ArgumentList "/S" -Wait
+        & "C:\Program Files\PowerShell\7\pwsh.exe" -Command "Start-Process -FilePath './tailscale-setup.exe' -ArgumentList '/S' -Wait"
+        # Add Tailscale to PATH (if necessary)
+        [System.Environment]::SetEnvironmentVariable('PATH', "$env:PATH;C:\Program Files\Tailscale", [System.EnvironmentVariableTarget]::Machine)
 
     - name: Start Tailscale
       run: |
         # Start Tailscale with provided authentication key and hostname
-        tailscale up --authkey $Env:TAILSCALE_AUTHKEY --hostname github-rdp
+        & "C:\Program Files\Tailscale\tailscale.exe" up --authkey $Env:TAILSCALE_AUTHKEY --hostname github-rdp
       env:
         TAILSCALE_AUTHKEY: ${{ secrets.TAILSCALE_AUTHKEY }}
 
