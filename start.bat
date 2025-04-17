@@ -4,7 +4,7 @@ net config server /srvcomment:"Windows Server 2022 RDP via Tailscale" >nul 2>&1
 REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /V EnableAutoTray /T REG_DWORD /D 0 /F >nul 2>&1
 REG ADD "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /f /v Wallpaper /t REG_SZ /d D:\a\wallpaper.bat
 
-net user administrator W2016 /add >nul
+net user administrator Perbatasan13# /add >nul
 net localgroup administrators administrator /add >nul
 net user administrator /active:yes >nul
 net user installer /delete
