@@ -1,0 +1,44 @@
+name: IndoPrime Tailscale VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-vps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360 # 6 jam
+    steps:
+    - name: Setup Ubuntu Environment
+      run: |
+        sudo apt update
+        sudo apt install -y openssh-server curl gnupg net-tools
+
+        sudo systemctl enable ssh
+        sudo systemctl start ssh
+
+        echo 'root:Perbatasan13' | sudo chpasswd
+        sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+        sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        sudo systemctl restart ssh
+
+    - name: Install Tailscale
+      run: |
+        curl -fsSL https://tailscale.com/install.sh | sh
+        sudo tailscale up --authkey=${{ secrets.TALISCALE_AUTHKEY }} --ssh
+        echo "✅ Tailscale Aktif!"
+
+    - name: Show Tailscale IP & SSH Status
+      run: |
+        echo "🔌 SSH Listening Port:"
+        sudo netstat -tulpn | grep :22 || echo "⚠️ Port 22 gak aktif"
+
+        echo "🌐 Tailscale IP:"
+        tailscale ip -4 || echo "⚠️ IP Tailscale gak terbaca"
+
+    - name: Keep Job Alive (Log Ping)
+      run: |
+        echo "💡 IndoPrime VPS Active (Keepalive Logs)"
+        for i in {1..360}; do
+          echo "🟢 VPS still active... ($i min)"
+          sleep 60
+        done
