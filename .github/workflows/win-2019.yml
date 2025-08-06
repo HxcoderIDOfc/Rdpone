@@ -1,0 +1,41 @@
+name: Windows 2019 RDP with Tailscale
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-2019
+    timeout-minutes: 360
+
+    steps:
+    - name: Download Files
+      run: |
+        Invoke-WebRequest https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe -OutFile tailscale-setup.exe
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/start.bat -OutFile start.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/wallpaper.png -OutFile wallpaper.png
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/wallpaper.bat -OutFile wallpaper.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/p-store13/Rdpone/main/loop.bat -OutFile loop.bat
+
+    - name: Install Tailscale
+      run: |
+        & "C:\Program Files\PowerShell\7\pwsh.exe" -Command "Start-Process -FilePath './tailscale-setup.exe' -ArgumentList '/S' -Wait"
+        [System.Environment]::SetEnvironmentVariable('PATH', "$env:PATH;C:\Program Files\Tailscale", [System.EnvironmentVariableTarget]::Machine)
+
+    - name: Start Tailscale
+      run: |
+        & "C:\Program Files\Tailscale\tailscale.exe" up --authkey $Env:TAILSCALE_AUTHKEY --hostname github-rdp
+      env:
+        TAILSCALE_AUTHKEY: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+    - name: Enable RDP Access
+      run: |
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        copy wallpaper.png C:\Users\Public\Desktop\wallpaper.png
+        copy wallpaper.bat C:\Users\Public\Desktop\wallpaper.bat
+
+    - name: Connect RDP
+      run: cmd /c start.bat
+
+    - name: Keep Alive
+      run: cmd /c loop.bat
