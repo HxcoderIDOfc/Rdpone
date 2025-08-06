@@ -1,10 +1,10 @@
-name: Windows 2019 RDP with Tailscale
+name: Windows 2025 RDP with Tailscale
 
 on: workflow_dispatch
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-2025
     timeout-minutes: 360
 
     steps:
